@@ -1,7 +1,7 @@
 {
-  "name": "eurix-bot",
+  "name": "Euro",
   "version": "1.0.0",
-  "description": "Discord Bot Eurix hoàn chỉnh theo ý tưởng của Euro",
+  "description": "Discord Bot Euro hoàn chỉnh",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,4 +11,3 @@
     "dotenv": "^16.4.5"
   }
 }
-
