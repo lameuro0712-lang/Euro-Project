@@ -548,5 +548,16 @@ function calculateScore(hand) {
 function formatHand(hand) {
     return hand.map(c => `\`${c.rank}${c.suit}\``).join(' ');
 }
+// --- TẠO MỘT WEB SERVER GIẢ LẬP ĐỂ RENDER KHÔNG BỊ LỖI PORT TIMEOUT ---
+const http = require('http');
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Bot Eurix is running and alive!\n');
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🌐 Web server giả lập đang chạy trên cổng ${PORT}`);
+});
 
 client.login(TOKEN);
