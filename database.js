@@ -16,4 +16,3 @@ function getUser(userId) {
 }
 
 module.exports = { getUser };
-
