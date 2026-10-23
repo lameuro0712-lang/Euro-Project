@@ -1,4 +1,4 @@
-// index.js - BẢN HOÀN CHỈNH KHÔNG LỖI SYNTAX
+// index.js - BẢN FIX TRIỆT ĐỂ KHỞI ĐỘNG BOT
 const { 
     Client, 
     GatewayIntentBits, 
@@ -19,7 +19,6 @@ const client = new Client({
     ]
 });
 
-const TOKEN = process.env.DISCORD_TOKEN;
 const CRIME_ROLE_ID = "1536004180555333803";
 const EMOJI_EURIX = "<:Eurix:1563134915346698331>";
 
@@ -152,7 +151,7 @@ client.on('messageCreate', async message => {
             .setTitle(`Nơi làm việc của ${memberName}`)
             .addFields(
                 { name: "Số dư:", value: `${user.balance} ${EMOJI_EURIX}`, inline: false },
-                { name: "Thu nhập thụ động:", value: `${baseSalary} ${EMOJI_EURIX} *(Trong ${hoursStacked} giờ)*`, inline: false },
+                { name: "Thu nhập thụ động:", value: `${baseSalary} ${EMOJI_EURIX} *(In ${hoursStacked} giờ)*`, inline: false },
                 { name: "Tình trạng công việc:", value: `${situationTitle}\n*(Khen thưởng/Phạt: ${rewardFormat} ${EMOJI_EURIX})*`, inline: false },
                 { name: "➔ Tổng tiền nhận được:", value: `**+${totalEarned}** ${EMOJI_EURIX}`, inline: false }
             )
@@ -448,10 +447,20 @@ server.listen(PORT, () => {
     console.log(`🌐 Web server giả lập đang chạy trên cổng ${PORT}`);
 });
 
-// --- ĐĂNG NHẬP BOT VÀO DISCORD ---
-console.log("⏳ Đang tiến hành đăng nhập bot vào Discord...");
-client.login(TOKEN).then(() => {
-    console.log("✅ Đã kết nối thành công tới Discord Gateway!");
-}).catch(err => {
-    console.error("❌ LỖI ĐĂNG NHẬP DISCORD:", err.message);
+// --- BẮT LỖI VÀ ĐĂNG NHẬP AN TOÀN ---
+console.log("⏳ Đang chuẩn bị kết nối tới Discord...");
+
+client.on('error', error => {
+    console.error("🔥 LỖI CLIENT:", error);
 });
+
+const discordToken = process.env.DISCORD_TOKEN;
+if (!discordToken) {
+    console.error("❌ LỖI: Chưa có biến môi trường DISCORD_TOKEN trên Render!");
+} else {
+    client.login(discordToken).then(() => {
+        console.log(`✅ ĐÃ KẾT NỐI THÀNH CÔNG VỚI DISCORD GATEWAY! Bot: ${client.user.tag}`);
+    }).catch(err => {
+        console.error("❌ ĐĂNG NHẬP THẤT BẠI:", err.message);
+    });
+}
