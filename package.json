@@ -1,13 +1,12 @@
 {
-  "name": "Euro",
+  "name": "euro-project",
   "version": "1.0.0",
-  "description": "Discord Bot Euro hoàn chỉnh",
+  "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
   "dependencies": {
-    "discord.js": "^14.14.0",
-    "dotenv": "^16.4.5"
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
   }
 }
