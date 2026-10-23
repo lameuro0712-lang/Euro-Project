@@ -1,4 +1,4 @@
-// index.js - BẢN FIX TRIỆT ĐỂ KHỞI ĐỘNG BOT
+// index.js - BẢN HOÀN CHỈNH CO NÓI ĐƯỢC CÓ LOG TEST TIN NHẮN
 const { 
     Client, 
     GatewayIntentBits, 
@@ -29,14 +29,13 @@ client.once('ready', () => {
     console.log(`🤖 Bot Eurix đã sẵn sàng phục vụ Pháo Đài của Euro! Tag: ${client.user.tag}`);
 });
 
+// BẮT SỰ KIỆN TIN NHẮN CHAT
 client.on('messageCreate', async message => {
-    // IN RA LOG MỖI KHI CÓ TIN NHẮN TỚI (Dù là từ ai hay kênh nào)
-    console.log(`📩 [${message.channel.name}] ${message.author.tag}: ${message.content}`);
+    // 1. IN LOG TEST MỖI KHI CÓ TIN NHẮN ĐẾN KÊNH CHAT
+    console.log(`📩 [${message.channel.name || 'DM'}] ${message.author.tag}: ${message.content}`);
 
-    // Bỏ qua tin nhắn từ bot
     if (message.author.bot) return;
 
-    // Chuyển toàn bộ tin nhắn thành chữ thường để so sánh
     const fullText = message.content.trim().toLowerCase();
     const args = fullText.split(/ +/);
     const command = args[0];
@@ -160,131 +159,6 @@ client.on('messageCreate', async message => {
             .addFields(
                 { name: "Số dư:", value: `${user.balance} ${EMOJI_EURIX}`, inline: false },
                 { name: "Thu nhập thụ động:", value: `${baseSalary} ${EMOJI_EURIX} *(Trong ${hoursStacked} giờ)*`, inline: false },
-                { name: "Tình trạng công việc:", value: `${situationTitle}\n*(Khen thưởng/Phạt: ${rewardFormat} ${EMOJI_EURIX})*`, inline: false },
-                { name: "➔ Tổng tiền nhận được:", value: `**+${totalEarned}** ${EMOJI_EURIX}`, inline: false }
-            )
-            .setColor(0x57F287)
-            .setFooter({ text: "Pháo đài của Euro • Hệ thống công việc" });
-
-        return message.reply({ embeds: [embedJob] });
-    }
-});
-
-    // ================= 1. HỆ THỐNG LÀM VIỆC (elamviec) =================
-    if (command === 'elamviec') {
-        const now = Date.now();
-        const oneHour = 3600 * 1000;
-
-        if (!user.job) {
-            let roll = Math.random() * 100;
-            if (user.luckboostExpiry > now) roll -= 5;
-
-            if (roll < 40) user.job = "Game Thủ";
-            else if (roll < 75) user.job = "Animator";
-            else if (roll < 95) user.job = "Content Creator";
-            else user.job = "Actor";
-
-            user.lastWorkTime = now;
-
-            const embedNew = new EmbedBuilder()
-                .setAuthor({ name: `${memberName} [ ${user.job} ]`, iconURL: message.author.displayAvatarURL() })
-                .setTitle(`Khởi đầu sự nghiệp của ${memberName}`)
-                .setDescription(`🎉 Bạn đã gacha thành công và nhận nghề: **${user.job}**!\nHãy dùng lại lệnh \`elamviec\` sau để tích lũy và nhận lương.`)
-                .setColor(0x5865F2)
-                .setFooter({ text: "Pháo đài của Euro • Hệ thống công việc" });
-
-            return message.reply({ embeds: [embedNew] });
-        }
-
-        const timePassed = now - user.lastWorkTime;
-        const hoursStacked = Math.floor(timePassed / oneHour);
-
-        if (hoursStacked < 1) {
-            if (Math.random() < 0.3) {
-                const penalty = 10;
-                user.balance = Math.max(0, user.balance - penalty);
-
-                const embedPen = new EmbedBuilder()
-                    .setAuthor({ name: `${memberName} [ ${user.job} ]`, iconURL: message.author.displayAvatarURL() })
-                    .setTitle(`Nơi làm việc của ${memberName}`)
-                    .setDescription(`⚠️ **Bạn đang trong thời gian nghỉ ngơi mà cố gượng làm việc!**\nBạn bị kiệt sức và phạt trừ **-${penalty} ${EMOJI_EURIX}**.\n\n**Số dư còn lại:** ${user.balance} ${EMOJI_EURIX}`)
-                    .setColor(0xED4245)
-                    .setFooter({ text: "Pháo đài của Euro • Hệ thống công việc" });
-
-                return message.reply({ embeds: [embedPen] });
-            } else {
-                const fortressSituations = [
-                    "🏰 1 thằng nhóc đeo kính áo vàng cùng 1 con chồn màu xanh ghé thăm pháo đài. Nhìn dị vcl!",
-                    "🏰 Mấy thằng nhóc trong sân banh cứ vừa đá bóng vừa xếp hình rồi lẩm bẩm về việc đá bóng bằng cả tính mạng, chả hiểu kiểu gì.",
-                    "🏰 Lòi đâu ra một thằng cha ủng hộ Israel đứng rêu rao khắp phố. Mấy anh công an đâu rồi?",
-                    "🏰 Lòi đâu ra một con mẹ ủng hộ phát xít đức đứng rêu rao khắp phố. Mấy anh công an đâu rồi?",
-                    "🏰 Công viên gần nhà vừa thuê nhân viên dọn nhà vệ sinh mới, ổng làm việc rất hăng say, nhà vệ sinh nào ổng dọn cũng sạch bong kin kít. Hỏi ổng thì mới biết ổng tên Tom Pearl."
-                ];
-                const sitText = fortressSituations[Math.floor(Math.random() * fortressSituations.length)];
-
-                const embedFort = new EmbedBuilder()
-                    .setAuthor({ name: `${memberName} [ ${user.job} ]`, iconURL: message.author.displayAvatarURL() })
-                    .setTitle(`Tình Trạng Pháo Đài`)
-                    .setDescription(`${sitText}\n\n*(Chưa đủ 1 giờ để nhận lương, hãy quay lại sau!)*`)
-                    .setColor(0xFEE75C)
-                    .setFooter({ text: "Pháo đài của Euro • Tình huống giải trí" });
-
-                return message.reply({ embeds: [embedFort] });
-            }
-        }
-
-        let hourlyRate = 5;
-        if (user.job === "Animator") hourlyRate = 10;
-        else if (user.job === "Content Creator") hourlyRate = 15;
-        else if (user.job === "Actor") hourlyRate = 30;
-
-        const baseSalary = hourlyRate * hoursStacked;
-        let situationTitle = "Ca làm việc bình thường";
-        let situationReward = 0;
-        let situationRoll = Math.random() * 100;
-
-        if (user.job === "Game Thủ") {
-            if (situationRoll < 20) { situationTitle = '"1 donater ngẫu nhiên muốn bạn lắc peach cho mọi người xem. Bạn đồng ý!"'; situationReward = 10; }
-            else if (situationRoll < 60) { situationTitle = '"Stream mượt mà, không gặp sự cố nào"'; situationReward = 0; }
-            else if (situationRoll < 80) { situationTitle = '"Bạn bị cháy máy vì tải Genshin Impact về"'; situationReward = -5; }
-            else { situationTitle = '"Bạn bất ngờ được fan cứng donate khủng!"'; situationReward = 50; }
-        } else if (user.job === "Animator") {
-            if (situationRoll < 25) { situationTitle = '"Sếp nhờ nhổ giúp cọng lông nách. Sếp cảm ơn bạn rất nhiều!"'; situationReward = 12; }
-            else if (situationRoll < 50) { 
-                const fine = Math.floor(user.balance * 0.1);
-                situationTitle = '"Sếp nổi giận và trừ 10% số tiền của bạn"'; situationReward = -fine; 
-            }
-            else if (situationRoll < 75) { situationTitle = '"Bạn bị sếp quỵt lương sau khi làm 3600 frame hoạt hình"'; situationReward = -10; }
-            else { situationTitle = '"Bạn vẽ xong 1 tập phim hoạt hình và nó rất thành công!"'; situationReward = 35; }
-        } else if (user.job === "Content Creator") {
-            if (situationRoll < 30) {
-                if (Math.random() < 0.2) { situationTitle = '"Một người ngẫu nhiên hợp tác với bạn. Bạn hợp tác rất thuận lợi!"'; situationReward = 30; }
-                else { situationTitle = '"Bạn nhận lời hợp tác nhưng bị hack bay mất kênh!"'; situationReward = -20; }
-            } else if (situationRoll < 65) { situationTitle = '"Bạn làm video mệt ỉa nhưng chỉ được 200 view"'; situationReward = -15; }
-            else { situationTitle = '"Video của bạn đạt xu hướng và Viral khắp cõi mạng!"'; situationReward = 20; }
-        } else if (user.job === "Actor") {
-            if (situationRoll < 30) {
-                if (Math.random() < 0.4) { situationTitle = '"Được mời đóng quảng cáo và quảng cáo đó thành công vcl!"'; situationReward = 80; }
-                else { 
-                    const fine = Math.floor(user.balance * 0.1);
-                    situationTitle = '"Bạn nhận lời đóng quảng cáo nhưng bị dắt sang Campuchia!"'; situationReward = -fine; 
-                }
-            } else if (situationRoll < 65) { situationTitle = '"Bộ phim bạn đóng dở ẹc và khán giả quay ra công kích bạn"'; situationReward = -50; }
-            else { situationTitle = '"Bộ phim bạn đóng nổi tiếng toàn thế giới!"'; situationReward = 60; }
-        }
-
-        const totalEarned = baseSalary + situationReward;
-        user.balance = Math.max(0, user.balance + totalEarned);
-        user.lastWorkTime = now;
-
-        const rewardFormat = situationReward >= 0 ? `+${situationReward}` : `${situationReward}`;
-
-        const embedJob = new EmbedBuilder()
-            .setAuthor({ name: `${memberName} [ ${user.job} ]`, iconURL: message.author.displayAvatarURL() })
-            .setTitle(`Nơi làm việc của ${memberName}`)
-            .addFields(
-                { name: "Số dư:", value: `${user.balance} ${EMOJI_EURIX}`, inline: false },
-                { name: "Thu nhập thụ động:", value: `${baseSalary} ${EMOJI_EURIX} *(In ${hoursStacked} giờ)*`, inline: false },
                 { name: "Tình trạng công việc:", value: `${situationTitle}\n*(Khen thưởng/Phạt: ${rewardFormat} ${EMOJI_EURIX})*`, inline: false },
                 { name: "➔ Tổng tiền nhận được:", value: `**+${totalEarned}** ${EMOJI_EURIX}`, inline: false }
             )
@@ -421,7 +295,7 @@ client.on('messageCreate', async message => {
     }
 });
 
-// Tương tác nút bấm
+// TƯƠNG TÁC NÚT BẤM
 client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
@@ -548,7 +422,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-// Hàm hỗ trợ bài tây
+// HÀM HỖ TRỢ BÀI TÂY
 function createDeck() {
     const suits = ['♠', '♥', '♦', '♣'];
     const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -569,7 +443,7 @@ function calculateScore(hand) {
 }
 function formatHand(hand) { return hand.map(c => `\`${c.rank}${c.suit}\``).join(' '); }
 
-// --- TẠO MỘT WEB SERVER GIẢ LẬP ĐỂ RENDER KHÔNG BỊ LỖI PORT TIMEOUT ---
+// WEB SERVER GIẢ LẬP ĐỂ GIỮ RENDER ONLINE
 const http = require('http');
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -580,7 +454,7 @@ server.listen(PORT, () => {
     console.log(`🌐 Web server giả lập đang chạy trên cổng ${PORT}`);
 });
 
-// --- BẮT LỖI VÀ ĐĂNG NHẬP AN TOÀN ---
+// ĐĂNG NHẬP BOT
 console.log("⏳ Đang chuẩn bị kết nối tới Discord...");
 
 client.on('error', error => {
