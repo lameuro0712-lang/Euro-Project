@@ -557,7 +557,11 @@ const server = http.createServer((req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`🌐 Web server giả lập đang chạy trên cổng ${PORT}`);
+console.log("⏳ Đang tiến hành đăng nhập bot vào Discord...");
+client.login(TOKEN).then(() => {
+    console.log("✅ Đã kết nối thành công tới Discord Gateway!");
+}).catch(err => {
+    console.error("❌ LỖI ĐĂNG NHẬP DISCORD:", err.message);
 });
 
 client.login(TOKEN);
