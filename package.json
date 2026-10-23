@@ -1,1 +1,14 @@
+{
+  "name": "eurix-bot",
+  "version": "1.0.0",
+  "description": "Discord Bot Eurix hoàn chỉnh theo ý tưởng của Euro",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.0",
+    "dotenv": "^16.4.5"
+  }
+}
 
