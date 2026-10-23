@@ -225,12 +225,11 @@ function startTaxScheduler() {
 }
 
 client.once('clientReady', () => {
-    console.log(`Bot ${client.user.tag} đã sẵn sàng chạy!`);
+    console.log(`[BOT ONLINE] Bot ${client.user.tag} đã sẵn sàng chạy!`);
     startTaxScheduler();
 });
 
 client.on('messageCreate', async message => {
-    // IN LOG ĐỂ KIỂM TRA MỖI KHI CÓ TIN NHẮN ĐẾN KÊNH
     console.log(`📩 [${message.channel.name}] ${message.author.tag}: ${message.content}`);
 
     if (message.author.bot || !message.guild) return;
@@ -1512,4 +1511,20 @@ client.on('messageCreate', async message => {
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+// ==========================================
+// KẾT NỐI DISCORD GATEWAY
+// ==========================================
+const token = process.env.DISCORD_TOKEN;
+
+if (!token) {
+    console.error("❌ LỖI NGHIÊM TRỌNG: Biến môi trường DISCORD_TOKEN chưa được cài đặt trên Render!");
+} else {
+    console.log("⏳ Đang kết nối tới Discord Gateway...");
+    client.login(token)
+        .then(() => {
+            console.log(`✅ BOT ĐÃ LOGIN THÀNH CÔNG! Sáng đèn Online: ${client.user.tag}`);
+        })
+        .catch(err => {
+            console.error("❌ LOGIN THẤT BẠI - Discord từ chối Token:", err.message);
+        });
+}
